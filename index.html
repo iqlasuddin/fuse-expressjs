@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Using Fuzzy Search</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css"
+    />
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <section class="hero is-primary">
+        <div class="hero-body">
+          <div class="container">
+            <h1 class="title">
+              Search Employees
+            </h1>
+            <h2 class="subtitle">
+              Using Fuzzysearch
+            </h2>
+          </div>
+        </div>
+      </section>
+
+      <div class="container">
+        <div class="field">
+          <div class="control">
+            <br /><br />
+            <input
+              class="input"
+              type="text"
+              placeholder="search employees"
+              v-model="searchItem"
+            />
+          </div>
+        </div>
+        <br />
+        <p v-text="searchStatus"></p>
+      </div>
+
+      <div class="container">
+        <br /><br />
+        <div class="card" v-for="result in results">
+          <div class="card-body">
+            <p class="title" v-text="result.obj.name"></p>
+            <p class="subtitle" v-text="result.obj.empid"></p>
+            <p class="subtitle" v-text="result.obj.national_id_number"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script>
+      var app = new Vue({
+        el: "#app",
+        data: {
+          searchItem: "",
+          results: [],
+          searchStatus: ""
+        },
+        watch: {
+          searchItem() {
+            if (this.searchItem.length >= 3) {
+              axios.get("/search/" + this.searchItem).then(res => {
+                this.results = res.data;
+                this.searchStatus = `Found ${res.data.length} results`;
+              });
+            } else {
+              this.results = [];
+              searchStatus: "";
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
